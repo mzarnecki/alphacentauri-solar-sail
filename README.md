@@ -1,6 +1,6 @@
 # ASS: Alpha centauri Solar Sail
 
-<p align="center"><img src="docs/images/hero.png" alt="Retro poster: a wind-up catapult on the Sun launches a tiny solar sail towards Alpha Centauri. Alpha Centauri or bust. Estimated arrival: year 9,247." width="640"></p>
+<p align="center"><img src="docs/images/hero.png" alt="Retro poster: a smiling operator in a helmet and sunglasses presses a big red button on a brass orbital laser above the Sun, beaming a tiny solar sail towards Alpha Centauri. Alpha Centauri or bust. Estimated arrival: year 9,247." width="640"></p>
 
 [![CI](https://github.com/mzarnecki/alphacentauri-solar-sail/actions/workflows/ci.yml/badge.svg)](https://github.com/mzarnecki/alphacentauri-solar-sail/actions/workflows/ci.yml)
 
