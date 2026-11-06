@@ -3,6 +3,20 @@
 Newest first. One entry per iteration, written for a future reader who has no memory of this
 project, which includes the agent.
 
+## Iteration 2, 2026-11-06
+
+**Shipped:** all six proposals: an `ass-research` MCP server (arXiv, ADS, SIMBAD, Gaia, feeds), a daily
+push gated by tests and a secret scan, and CI. Also the mission control demo app, and a tighter agent
+sandbox now that its commits become public.
+
+**Learned:** the first comparison with SIMBAD found real disagreements in parallax and radial velocity,
+now on the roadmap. Cloudy Nights does not want bots, and Reddit rate-limits quickly. systemd's home
+sandboxing does nothing in user units on this machine, and it says nothing about that.
+
+**Model:** Claude Opus 5.5.
+
+**Next:** reconcile the star constants.
+
 ## Iteration 1, 2026-11-06
 
 **Shipped:** the first mission model. A sail force and temperature model, Alpha Centauri

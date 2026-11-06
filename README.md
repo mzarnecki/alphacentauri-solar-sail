@@ -1,8 +1,8 @@
 # ASS: Alpha centauri Solar Sail
 
-<!-- Hero image goes here once generated, see docs/IMAGE_PROMPTS.md:
-![A tiny solar sail leaving the Sun for Alpha Centauri](docs/images/hero.png)
--->
+<p align="center"><img src="docs/images/hero.png" alt="Retro poster: a tiny solar sail leaves the Sun for Alpha Centauri. Estimated arrival: year 9,247." width="480"></p>
+
+[![CI](https://github.com/mzarnecki/alphacentauri-solar-sail/actions/workflows/ci.yml/badge.svg)](https://github.com/mzarnecki/alphacentauri-solar-sail/actions/workflows/ci.yml)
 
 > **Mission status:** 4.34 light-years to go. Spacecraft: none. Sail: none. Budget: none.
 > Test coverage: 100%.
@@ -26,11 +26,11 @@ Every day, an AI agent wakes up on a laptop and:
 1. reads what it did yesterday, because it does not remember,
 2. checks what humanity has invented since then,
 3. ships one small, tested piece of the mission software,
-4. adds to its [ideas for wider improvements](docs/PROPOSALS.md), like new MCP connections to arXiv
-   and astronomy forums,
+4. adds to its [ideas for wider improvements](docs/PROPOSALS.md),
 5. adds to the [shopping list of hardware](docs/HARDWARE.md) it will eventually need, such as a
    robot, a laser or a star,
-6. writes it all down in the [development log](docs/DEVLOG.md) and goes back to sleep.
+6. writes it all down in the [development log](docs/DEVLOG.md), publishes it here if the tests and
+   a secret scan pass, and goes back to sleep.
 
 The project is meant to outlive its tools. When better LLMs arrive, they take over the job. When
 someone invents better sail materials, the numbers get updated. The questions we are testing:
@@ -39,7 +39,10 @@ someone invents better sail materials, the numbers get updated. The questions we
 - Can an agent keep a sense of direction when the finish line is out of reach?
 - How long until it starts filing tickets against the Sun?
 
-The agent writes the code, a human reviews it, and the universe remains unmoved.
+<p align="center"><img src="docs/images/mission-control.png" alt="A lone robot drinks coffee in mission control. Progress: 0.000000%. All tests passing." width="640"></p>
+
+The agent writes the code, a robot checks it, a human reads it eventually, and the universe remains
+unmoved.
 
 ## What is a solar sail?
 
@@ -68,6 +71,8 @@ The best known trick is the **sundiver**: fall towards the Sun with the sail edg
 face-on at the last moment, when the light is fiercest. The difficulty is doing this without
 melting, which is why `ass` will sometimes congratulate you on inventing a very expensive comet.
 
+<p align="center"><img src="docs/images/sundiver.png" alt="A solar sail skims the surface of the Sun. A small robot holds up a parasol." width="640"></p>
+
 ## Where are we going?
 
 Alpha Centauri is the closest star system to the Sun, in the southern constellation of Centaurus.
@@ -86,6 +91,8 @@ awaiting confirmation.
 
 For scale: Voyager 1, humanity's most distant spacecraft, would need more than 70,000 years to
 cover the same distance, and it is not even pointed the right way.
+
+<p align="center"><img src="docs/images/travel-poster.png" alt="Vintage travel poster for Proxima b." width="420"></p>
 
 ## So how long will it take?
 
@@ -113,9 +120,20 @@ All runs below dive to 0.1 AU from the Sun:
 
 Please pack accordingly.
 
+<p align="center"><img src="docs/images/arrival.png" alt="An ancient, battered sail reaches a planet where far-future humans hold up a sign: what took you so long?" width="640"></p>
+
 There is also a Plan B. Alpha Centauri is drifting towards us and will come within about 3 light
 years in roughly 27,000 years. The software tracks this as `Star.closest_approach()`. It will not
 come much closer than that, so we still need the sail.
+
+## Try it
+
+**ASS mission control** is a small web app that runs all of the modules live in your browser. Change
+the sail, pick a star, then watch your arrival date recede into the distant future.
+
+```bash
+uv run streamlit run app/streamlit_app.py
+```
 
 ## What exists today
 
@@ -126,6 +144,8 @@ come much closer than that, so we still need the sail.
 | `ass.trajectory` | Sundiver speed and a numerical integrator that checks the formula |
 | `ass.mission` | Aiming at where the star will be on arrival, braking feasibility, and a verdict |
 | `ass.cli` | The `ass` command, for finding out how late you will arrive |
+| `ass.research` | An MCP server for arXiv, NASA ADS, SIMBAD, Gaia and astronomy feeds, so the agent can read |
+| `app/` | The mission control web app |
 
 Everything else is on the [roadmap](docs/ROADMAP.md). It is a long roadmap.
 

@@ -1,8 +1,8 @@
 # Image prompts for ChatGPT
 
 To make the images, paste the **style block** and then one **scene** into ChatGPT, save the result
-under `docs/images/` with the filename shown, and then uncomment the matching line in `README.md`.
-The hero image's line is already there, and the others can be added wherever they fit.
+under `docs/images/` with the filename shown. `README.md` already uses all five, so saving a new
+version replaces the old one.
 
 ## Style block
 
