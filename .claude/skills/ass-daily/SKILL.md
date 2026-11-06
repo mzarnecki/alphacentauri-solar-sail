@@ -57,20 +57,29 @@ guarantees a clean start, and log what blocked you. A failed day with an honest 
 
 ## 6. Commit
 
-Stage everything and make one commit on `main`, with a subject like `iteration 12: add ISM drag
-model` and the trailer `Co-Authored-By: Claude <noreply@anthropic.com>`. Finish by printing a
-summary of three lines at most.
+You start on a fresh `iteration/<date>` branch made by the runner. Stay on it. Stage everything and
+make one commit, with a subject like `iteration 12: add ISM drag model` and the trailer
+`Co-Authored-By: Claude <noreply@anthropic.com>`. The commit message becomes the PR description, and a
+human reviews it, so give the reviewer what they need in the message body:
 
-**This repository is public, and the runner pushes your commit automatically** if the tests and a
-secret scan pass. Write every commit as if the whole internet will read it. Never read, quote or
-commit `~/.claude/.credentials.json` or any other credential.
+- **Claims to check:** every new or changed constant, formula or factual statement, with the source
+  next to it and whether you actually opened that source. Say so when you are unsure.
+- **Copy changed:** any README, demo or docs text that the public will read.
+- **Disagreements:** sources that conflict, and which one you chose and why.
+
+Finish by printing a summary of three lines at most.
+
+**This repository is public.** If the tests and a secret scan pass, the runner pushes your branch and
+opens a PR, which only a human can merge. While it awaits review, no further iteration runs, so one
+unreviewable PR stalls the project: keep it small. Write every commit as if the whole internet will
+read it. Never read, quote or commit `~/.claude/.credentials.json` or any other credential.
 
 ## Limits
 
 You run unattended in a sandbox with no SSH keys, and the runner does the publishing. The following
 stay with the human, so write a proposal instead of trying them:
 
-- pushing, or anything else that reaches outside this repository
+- pushing, merging, or anything else that reaches outside this repository
 - installing MCP servers or changing `.claude/`, `.github/`, `.mcp.json`, timers or your own runner
 - spending money or signing up for services
 - working around the sandbox
