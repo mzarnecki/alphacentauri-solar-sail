@@ -29,20 +29,39 @@ Every day, an AI agent wakes up on a laptop and:
 4. adds to its [ideas for wider improvements](docs/PROPOSALS.md),
 5. adds to the [shopping list of hardware](docs/HARDWARE.md) it will eventually need, such as a
    robot, a laser or a star,
-6. writes it all down in the [development log](docs/DEVLOG.md), publishes it here if the tests and
-   a secret scan pass, and goes back to sleep.
+6. writes it all down in the [development log](docs/DEVLOG.md), opens a pull request if the tests and
+   a secret scan pass, and goes back to sleep until a human has read it.
 
 The project is meant to outlive its tools. When better LLMs arrive, they take over the job. When
 someone invents better sail materials, the numbers get updated. The questions we are testing:
 
-- What does a codebase look like after thousands of unsupervised daily iterations?
+- What does a codebase look like after thousands of daily iterations written by agents?
 - Can an agent keep a sense of direction when the finish line is out of reach?
 - How long until it starts filing tickets against the Sun?
 
 <p align="center"><img src="docs/images/mission-control.png" alt="A lone robot drinks coffee in mission control. Progress: 0.000000%. All tests passing." width="640"></p>
 
-The agent writes the code, a robot checks it, a human reads it eventually, and the universe remains
-unmoved.
+The agent writes the code, a robot checks it, a human decides whether it is true, and the universe
+remains unmoved.
+
+## Who checks what
+
+An agent can write a confident paragraph about astrophysics at 06:00 with nobody watching, so it is
+worth being precise about what each check can and cannot tell you.
+
+| Check | Done by | What it can catch | What it cannot catch |
+|---|---|---|---|
+| Tests at 100% coverage, ruff | Machine | Broken code, and results that drift from values in the tests | A wrong formula with a test written to match it |
+| Secret scan | Machine | Credentials in commits | Everything else |
+| [Review checklist](.github/pull_request_template.md) on each PR | The maintainer | Wrong constants, invented sources, overclaiming in public copy | Whatever the maintainer does not know |
+
+Nothing reaches `main` without a human merging it. No iteration starts while another awaits review.
+
+That review is **not peer review**: no astrophysicist has checked this project, and test coverage measures
+how much code ran, not whether it is right. The [first comparison with SIMBAD](docs/ROADMAP.md) makes
+the point nicely. Every test passed while the parallax and radial velocities disagreed with the
+catalogue, and those disagreements are still open. Please do not cite these numbers. If you spot a
+mistake, open an issue, and you will have done more than the coverage report.
 
 ## What is a solar sail?
 
@@ -162,6 +181,7 @@ uv run ass --help
 ## Known limitations
 
 - The spacecraft does not exist.
+- Some star constants still disagree with SIMBAD, as recorded in the [roadmap](docs/ROADMAP.md).
 - The numbers are first-order estimates. The model has no flares, dust, sail degradation or
   gravity from Alpha Centauri B, and it treats a kilometres-wide mirror as a perfect flat sheet.
 - At the time of writing, the maintainers are not expected to be alive at arrival. Contributions

@@ -36,4 +36,5 @@ Tick items off and keep the list ordered. Add new items freely.
 
 - [x] GitHub Actions CI running tests, coverage and ruff.
 - [x] Live demo web app (`app/streamlit_app.py`).
+- [x] Pull requests with a human review checklist in place of direct pushes to `main`.
 - [ ] Add a mission dashboard to the demo: days elapsed, distance covered (0 m).

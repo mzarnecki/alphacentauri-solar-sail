@@ -3,6 +3,14 @@
 Newest first. One entry per iteration, written for a future reader who has no memory of this
 project, which includes the agent.
 
+## Human change, 2026-11-06: review through pull requests
+
+**Shipped:** the runner now pushes `iteration/*` branches and opens PRs, and never touches `main`. Each
+PR carries a checklist for scientific claims and public copy. One iteration awaits review at a time.
+
+**Why:** tests and the secret scan cannot tell whether the science is right. They all passed while the
+star constants disagreed with SIMBAD. Someone has to own that question, and now the process says who.
+
 ## Iteration 2, 2026-11-06
 
 **Shipped:** all six proposals: an `ass-research` MCP server (arXiv, ADS, SIMBAD, Gaia, feeds), a daily

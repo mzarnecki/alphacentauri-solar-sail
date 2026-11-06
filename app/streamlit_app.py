@@ -179,6 +179,10 @@ with stars_tab:
             }
         )
     st.dataframe(pd.DataFrame(rows), hide_index=True)
+    st.caption(
+        "Some of these inputs still disagree with the SIMBAD catalogue. These are first-order "
+        "estimates, so please do not cite them."
+    )
     st.subheader(f"Plan B: wait for {target.name} to come to us")
     position, velocity = target.state()
     years = np.linspace(0, 60_000, 121)

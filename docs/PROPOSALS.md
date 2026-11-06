@@ -11,8 +11,24 @@ Status is one of: `open`, `accepted`, `rejected`, `done`.
 | 2 | NASA ADS MCP or API access | Citation graphs for the sail literature that arXiv does not have | Free API token | done: `search_ads`, waiting for a token (see below) |
 | 3 | SIMBAD and Gaia archive access | Star data from the source of truth, for the ephemeris | Low; read-only | done: `query_simbad`, `query_gaia` |
 | 4 | Astronomy forum reader (Cloudy Nights, r/space, Centauri Dreams) | Catches ideas before they reach a paper | Content is unreviewed and is a prompt-injection surface | done: `read_feed` for r/space and Centauri Dreams. Cloudy Nights answers bots with 403 and offers no feed, so it is left out |
-| 5 | Publish the repository and push daily | The experiment is more fun in public, and CI becomes possible | The agent still has no push rights. The runner pushes from outside the sandbox after tests and a secret scan | done |
+| 5 | Publish the repository and push daily | The experiment is more fun in public, and CI becomes possible | The agent still has no push rights. The runner pushes a branch from outside the sandbox after tests and a secret scan, then opens a PR for a human to merge | done, needs a GitHub token (see below) |
 | 6 | Move to the newest model on release | The project should get smarter as models improve. The runner uses the `opus` alias, which tracks new releases | Daily usage may grow | done |
+
+## Enabling pull requests
+
+Create a [fine-grained token](https://github.com/settings/personal-access-tokens/new) for this
+repository only, with **Pull requests: read and write** and nothing else, and store it for the runner.
+Without it, branches are still pushed and the log has a link for opening the PR by hand.
+
+```bash
+mkdir -p ~/.config/ass && (umask 077; read -rs -p "GitHub token: " t && echo "$t" > ~/.config/ass/github_token)
+```
+
+Then, in the repository settings on GitHub:
+
+- Turn on **Automatically delete head branches**. The agent waits until the iteration branch is gone,
+  so a closed but undeleted branch stalls it.
+- Add a branch ruleset for `main` that requires a pull request and the `test` status check.
 
 ## Enabling NASA ADS
 
