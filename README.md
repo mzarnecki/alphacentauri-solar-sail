@@ -1,6 +1,6 @@
 # ASS: Alpha centauri Solar Sail
 
-<p align="center"><img src="docs/images/hero.png" alt="Retro poster: a tiny solar sail leaves the Sun for Alpha Centauri. Estimated arrival: year 9,247." width="480"></p>
+<p align="center"><img src="docs/images/hero.png" alt="Retro poster: a wind-up catapult on the Sun launches a tiny solar sail towards Alpha Centauri. Alpha Centauri or bust. Estimated arrival: year 9,247." width="640"></p>
 
 [![CI](https://github.com/mzarnecki/alphacentauri-solar-sail/actions/workflows/ci.yml/badge.svg)](https://github.com/mzarnecki/alphacentauri-solar-sail/actions/workflows/ci.yml)
 
@@ -111,7 +111,7 @@ awaiting confirmation.
 For scale: Voyager 1, humanity's most distant spacecraft, would need more than 70,000 years to
 cover the same distance, and it is not even pointed the right way.
 
-<p align="center"><img src="docs/images/travel-poster.png" alt="Vintage travel poster for Proxima b." width="420"></p>
+<p align="center"><img src="docs/images/travel-poster.png" alt="Vintage travel poster: sun loungers and cocktails under a huge flaring red star. Visit Proxima b. Only 4.25 light-years away. Flares included." width="640"></p>
 
 ## So how long will it take?
 

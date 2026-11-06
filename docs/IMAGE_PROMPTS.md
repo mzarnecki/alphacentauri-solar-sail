@@ -21,13 +21,14 @@ from any words I specify. Spell any specified words exactly as given.
 ### 1. Hero banner: `hero.png` (wide, 16:9)
 
 ```text
-A tiny golden solar sail leaves a huge blazing Sun at lower left, heading towards two bright stars,
-one yellow and one orange, with a faint red dot beside them at far upper right. An enormous gulf of
-empty star-speckled space fills the image between them. Across the top, in large retro lettering:
-"ASS". Beneath it, in smaller type: "Alpha Centauri or bust. Estimated arrival: year 9,247."
+A giant brass wind-up catapult bolted to a huge blazing Sun at lower left has just launched a tiny
+golden solar sail towards two bright stars, one yellow and one orange, with a faint red dot beside
+them at far upper right. An enormous gulf of empty star-speckled space fills the image between them.
+At upper left, in a retro badge: "ASS". At lower right, in large type: "Alpha Centauri or bust.
+Estimated arrival: year 9,247."
 ```
 
-### 2. Travel poster: `travel-poster.png` (portrait, 2:3)
+### 2. Travel poster: `travel-poster.png` (16:9)
 
 ```text
 A vintage tourism poster for a rocky planet with a huge red dwarf star in its sky and elegant
