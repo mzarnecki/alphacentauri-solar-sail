@@ -3,6 +3,35 @@
 Newest first. One entry per iteration, written for a future reader who has no memory of this
 project, which includes the agent.
 
+## Iteration 3, 2026-11-07
+
+**Shipped:** every star constant in `ass.bodies` now has a source. A and B share one barycentric
+motion, Proxima uses Gaia astrometry, and `binding()` checks whether Proxima is bound to A and B, also
+shown in the demo's Stars tab. The flight to A at 1 g/m² moved by 0.5%, from 7,221 to 7,184 years. The
+README poster still says year 9,247, because a poster is harder to patch than a table.
+
+**Learned:** the seed constants had Proxima moving at 1,811 m/s relative to A and B, three times the
+557 m/s escape speed, with all tests passing. It is now 268 m/s, against a published 273 ± 49. Matching
+SIMBAD would have been the wrong goal: its A and B values each include orbital motion on one date, and
+extrapolating those for millennia makes the pair drift apart. SIMBAD's -15.252 km/s for A also looks
+out of range. Akeson's elements give my own estimate of at most 6.05 km/s of orbital velocity about the
+barycentre, and this value is 7.08 away. I could not open its source (2021MNRAS.506..150B), so that is
+an open question, not a catalogue error.
+
+**Blocked:** `query_gaia` errored on both attempts, so the Gaia EDR3 values for Proxima are as quoted by
+SIMBAD. ADS was not tried, and its abstract page refuses WebFetch. Table values were read through
+WebFetch's summariser, twice for the key ones, with no raw text to compare against (proposal 7).
+
+**Sources:** opened Akeson+ 2021 (arXiv:2104.10086), Kervella+ 2016 (arXiv:1610.06079), Kervella+ 2017
+(arXiv:1611.03495), Thévenin+ 2002 (astro-ph/0206283), Boyajian+ 2012 (arXiv:1208.2431) and SIMBAD.
+Abstracts only, with no change to the plan: a Bragg grating liquid-crystal sail (arXiv:2610.28942),
+reflective nanopillar metasurfaces (arXiv:2610.31452), and TOLIMAN, a CubeSat that will hunt for planets
+around A and B (arXiv:2603.14683).
+
+**Model:** Claude Opus 5.5.
+
+**Next:** A/B orbital motion, using the Akeson elements.
+
 ## Human change, 2026-11-06: review through pull requests
 
 **Shipped:** the runner now pushes `iteration/*` branches and opens PRs, and never touches `main`. Each

@@ -58,10 +58,10 @@ worth being precise about what each check can and cannot tell you.
 Nothing reaches `main` without a human merging it. No iteration starts while another awaits review.
 
 That review is **not peer review**: no astrophysicist has checked this project, and test coverage measures
-how much code ran, not whether it is right. The [first comparison with SIMBAD](docs/ROADMAP.md) makes
-the point nicely. Every test passed while the parallax and radial velocities disagreed with the
-catalogue, and those disagreements are still open. Please do not cite these numbers. If you spot a
-mistake, open an issue, and you will have done more than the coverage report.
+how much code ran, not whether it is right. The [star constants](docs/DEVLOG.md) make the point nicely.
+Every test passed at 100% coverage while the numbers had Proxima Centauri leaving the system at three
+times escape speed. Please do not cite these numbers. If you spot a mistake, open an issue, and you
+will have done more than the coverage report.
 
 ## What is a solar sail?
 
@@ -124,8 +124,8 @@ Lightness:     14.547 (above 1, the Sun pushes harder than it pulls)
 Cruise speed:  508 km/s (0.169% of c)
 Capture limit: 626 km/s
 Peak temp:     853 K (melts at 933 K)
-Flight time:   2,462 years
-Arrival:       year 4,488
+Flight time:   2,458 years
+Arrival:       year 4,484
 Verdict:       CAPTURE: the sail can brake on starlight and stay
 ```
 
@@ -134,15 +134,15 @@ All runs below dive to 0.1 AU from the Sun:
 | Spacecraft (grams per m², payload included) | Cruise speed | Flight time | Verdict |
 |---|---|---|---|
 | 156 g/m², LightSail 2 class | 13 km/s | Never | Alpha Centauri moves sideways at 23 km/s and simply outruns it |
-| 1 g/m², which nobody can build | 161 km/s | 7,221 years | Arrives and stays |
-| 0.1 g/m², which nobody can even imagine building | 508 km/s | 2,462 years | Arrives and stays |
+| 1 g/m², which nobody can build | 161 km/s | 7,184 years | Arrives and stays |
+| 0.1 g/m², which nobody can even imagine building | 508 km/s | 2,458 years | Arrives and stays |
 
 Please pack accordingly.
 
 <p align="center"><img src="docs/images/arrival.png" alt="An ancient, battered sail reaches a planet where far-future humans hold up a sign: what took you so long?" width="640"></p>
 
-There is also a Plan B. Alpha Centauri is drifting towards us and will come within about 3 light
-years in roughly 27,000 years. The software tracks this as `Star.closest_approach()`. It will not
+There is also a Plan B. Alpha Centauri is drifting towards us and will come within about 3.1 light
+years in roughly 28,000 years. The software tracks this as `Star.closest_approach()`. It will not
 come much closer than that, so we still need the sail.
 
 ## Try it
@@ -158,7 +158,7 @@ uv run streamlit run app/streamlit_app.py
 
 | Module | What it does |
 |---|---|
-| `ass.bodies` | The Sun and the three Centauri stars, with positions and motion through space |
+| `ass.bodies` | The Sun and the three Centauri stars, with cited positions and motion through space, and a check that Proxima is staying |
 | `ass.sail` | Radiation-pressure thrust, lightness and equilibrium temperature |
 | `ass.trajectory` | Sundiver speed and a numerical integrator that checks the formula |
 | `ass.mission` | Aiming at where the star will be on arrival, braking feasibility, and a verdict |
@@ -181,7 +181,7 @@ uv run ass --help
 ## Known limitations
 
 - The spacecraft does not exist.
-- Some star constants still disagree with SIMBAD, as recorded in the [roadmap](docs/ROADMAP.md).
+- A and B move as a single point for now, because the 80-year orbit is on the [roadmap](docs/ROADMAP.md).
 - The numbers are first-order estimates. The model has no flares, dust, sail degradation or
   gravity from Alpha Centauri B, and it treats a kilometres-wide mirror as a perfect flat sheet.
 - At the time of writing, the maintainers are not expected to be alive at arrival. Contributions
