@@ -30,6 +30,8 @@ def test_default_view_reports_the_mission(app):
     assert metrics["Cruise speed"] == "161 km/s"
     assert metrics["Lightness at the Sun"] == "1.455"
     assert app.info[0].value.startswith("CAPTURE")
+    assert metrics["Proxima's speed relative to A and B"] == "268 m/s"
+    assert metrics["Speed it would need to leave"] == "557 m/s"
 
 
 def test_a_heavy_sail_gets_an_explanation_not_a_crash(app):

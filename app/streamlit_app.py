@@ -10,7 +10,7 @@ import pandas as pd
 import streamlit as st
 from astropy.constants import c
 
-from ass.bodies import SECONDS_PER_YEAR, SUN, TARGETS
+from ass.bodies import ALPHA_CEN_A, ALPHA_CEN_B, PROXIMA, SECONDS_PER_YEAR, SUN, TARGETS, binding
 from ass.mission import intercept, plan
 from ass.research import FEEDS, query_simbad, read_feed, search_arxiv
 from ass.sail import Sail
@@ -180,9 +180,14 @@ with stars_tab:
         )
     st.dataframe(pd.DataFrame(rows), hide_index=True)
     st.caption(
-        "Some of these inputs still disagree with the SIMBAD catalogue. These are first-order "
-        "estimates, so please do not cite them."
+        "A and B share the motion of their barycentre, so their radial velocities differ from "
+        "SIMBAD's on purpose. These are first-order estimates, so please do not cite them."
     )
+    st.subheader("Is Proxima staying?")
+    relative, escape = binding(PROXIMA, (ALPHA_CEN_A, ALPHA_CEN_B))
+    columns = st.columns(2)
+    columns[0].metric("Proxima's speed relative to A and B", f"{relative:,.0f} m/s")
+    columns[1].metric("Speed it would need to leave", f"{escape:,.0f} m/s")
     st.subheader(f"Plan B: wait for {target.name} to come to us")
     position, velocity = target.state()
     years = np.linspace(0, 60_000, 121)
