@@ -21,7 +21,8 @@ def test_target_and_launch_year_flow_into_the_report(capsys):
     first = capsys.readouterr().out
     main(["--target", "proxima", "--launch-year", "4000"])
     assert "Proxima Centauri" in first
-    assert arrival_year(capsys.readouterr().out) - arrival_year(first) == 1000
+    # Waiting 1,000 years lets Proxima come about 4,600 AU closer, so the flight is shorter.
+    assert 800 < arrival_year(capsys.readouterr().out) - arrival_year(first) < 1000
 
 
 @pytest.mark.parametrize(

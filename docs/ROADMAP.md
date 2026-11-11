@@ -5,17 +5,19 @@ Tick items off and keep the list ordered. Add new items freely.
 
 ## Next up
 
-- [ ] Add A/B orbital motion, so arrival geometry knows where each star is at the arrival date. Use
-      the Akeson+ 2021 elements (arXiv:2104.10086, Table 8). Its RV prediction can also test
-      SIMBAD's -15.252 km/s for A, which looks out of range (see the devlog).
-- [ ] Propagate star positions from their J2000 epoch to the launch date. `state()` skips this today,
-      an error of about 0.002 light-years by 2026 that grows with every year we fail to launch.
 - [ ] Solve for the best sundiver: fastest perihelion that stays below the melting point.
 - [ ] Materials database (aluminium, graphene, dielectric stacks, ...) in place of a single melting point.
 - [ ] Mass budget: sail, booms, payload, and the areal density they imply.
+- [ ] Choose one luminosity source for A and B. Thévenin+ 2002 gives 1.519 and 0.5002, Akeson+ 2021
+      Table 8 gives 1.5059 and 0.4981, and the orbit and masses already come from Akeson.
+- [ ] Find the source behind SIMBAD's -15.252 km/s for A (2021MNRAS.506..150B). The orbit now shows
+      A never recedes from the barycentre faster than 6.05 km/s, and that value needs 7.08.
 
 ## Done
 
+- [x] Add A/B orbital motion with the Akeson+ 2021 elements, and aim at each star where it will be
+      on arrival (iteration 4).
+- [x] Propagate star positions from their catalogue epoch to the launch date (iteration 4).
 - [x] Reconcile `ass.bodies` with the literature and cite each constant (iteration 3).
 
 ## Flight dynamics

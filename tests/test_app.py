@@ -30,8 +30,8 @@ def test_default_view_reports_the_mission(app):
     assert metrics["Cruise speed"] == "161 km/s"
     assert metrics["Lightness at the Sun"] == "1.455"
     assert app.info[0].value.startswith("CAPTURE")
-    assert metrics["Proxima's speed relative to A and B"] == "268 m/s"
-    assert metrics["Speed it would need to leave"] == "557 m/s"
+    assert metrics["Proxima's speed relative to A and B"] == "274 m/s"
+    assert metrics["Speed it would need to leave"] == "556 m/s"
 
 
 def test_a_heavy_sail_gets_an_explanation_not_a_crash(app):
@@ -44,6 +44,10 @@ def test_changing_the_star_changes_the_report(app):
     app.selectbox(key="target").select("proxima").run()
     assert not app.exception
     assert "Plan B: wait for Proxima Centauri" in [s.value for s in app.subheader][-2]
+
+
+def test_stars_tab_shows_the_binary_orbit(app):
+    assert "A and B, waltzing" in [s.value for s in app.subheader]
 
 
 @pytest.mark.parametrize(
