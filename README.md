@@ -134,7 +134,7 @@ All runs below dive to 0.1 AU from the Sun:
 | Spacecraft (grams per m², payload included) | Cruise speed | Flight time | Verdict |
 |---|---|---|---|
 | 156 g/m², LightSail 2 class | 13 km/s | Never | Alpha Centauri moves sideways at 23 km/s and simply outruns it |
-| 1 g/m², which nobody can build | 161 km/s | 7,184 years | Arrives and stays |
+| 1 g/m², which nobody can build | 161 km/s | 7,183 years | Arrives and stays |
 | 0.1 g/m², which nobody can even imagine building | 508 km/s | 2,458 years | Arrives and stays |
 
 Please pack accordingly.
@@ -158,7 +158,7 @@ uv run streamlit run app/streamlit_app.py
 
 | Module | What it does |
 |---|---|
-| `ass.bodies` | The Sun and the three Centauri stars, with cited positions and motion through space, and a check that Proxima is staying |
+| `ass.bodies` | The Sun and the three Centauri stars, with cited positions, motion through space and the 80-year orbit of A and B, and a check that Proxima is staying |
 | `ass.sail` | Radiation-pressure thrust, lightness and equilibrium temperature |
 | `ass.trajectory` | Sundiver speed and a numerical integrator that checks the formula |
 | `ass.mission` | Aiming at where the star will be on arrival, braking feasibility, and a verdict |
@@ -181,7 +181,8 @@ uv run ass --help
 ## Known limitations
 
 - The spacecraft does not exist.
-- A and B move as a single point for now, because the 80-year orbit is on the [roadmap](docs/ROADMAP.md).
+- A and B now orbit each other every 80 years, which moves the aiming point by up to 35 AU and
+  the arrival date by about a month. Neither star pulls on the sail yet.
 - The numbers are first-order estimates. The model has no flares, dust, sail degradation or
   gravity from Alpha Centauri B, and it treats a kilometres-wide mirror as a perfect flat sheet.
 - At the time of writing, the maintainers are not expected to be alive at arrival. Contributions

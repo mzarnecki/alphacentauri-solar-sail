@@ -10,7 +10,16 @@ import pandas as pd
 import streamlit as st
 from astropy.constants import c
 
-from ass.bodies import ALPHA_CEN_A, ALPHA_CEN_B, PROXIMA, SECONDS_PER_YEAR, SUN, TARGETS, binding
+from ass.bodies import (
+    AB_ORBIT,
+    ALPHA_CEN_A,
+    ALPHA_CEN_B,
+    PROXIMA,
+    SECONDS_PER_YEAR,
+    SUN,
+    TARGETS,
+    binding,
+)
 from ass.mission import intercept, plan
 from ass.research import FEEDS, query_simbad, read_feed, search_arxiv
 from ass.sail import Sail
@@ -106,7 +115,7 @@ with mission_tab:
     for grams in np.geomspace(0.01, 1000, 50):
         speed = cruise_speed(Sail(grams / 1000, reflectivity), SUN, perihelion * AU)
         try:
-            years = intercept(target, speed)[0] / SECONDS_PER_YEAR
+            years = intercept(target, speed, launch_year)[0] / SECONDS_PER_YEAR
         except ValueError:  # too slow to ever catch the star: leave a gap in the line
             continue
         rows.append({"Weight (g/m²)": round(grams, 3), "Flight time (years)": round(years)})
@@ -166,7 +175,7 @@ with stars_tab:
     st.subheader("Where we are going")
     rows = []
     for star in TARGETS.values():
-        position, velocity = star.state()
+        position, velocity = star.state(launch_year)
         years, closest = star.closest_approach()
         rows.append(
             {
@@ -174,22 +183,40 @@ with stars_tab:
                 "Distance (ly)": round(float(np.linalg.norm(position)) / LY, 3),
                 "Speed through space (km/s)": round(float(np.linalg.norm(velocity)) / 1000, 1),
                 "Your sail's lightness there": round(sail.lightness(star), 3),
-                "Closest approach (years away)": round(years),
+                "Closest approach (years away)": round(years - (launch_year - star.epoch)),
                 "Closest approach (ly)": round(closest / LY, 2),
             }
         )
     st.dataframe(pd.DataFrame(rows), hide_index=True)
     st.caption(
-        "A and B share the motion of their barycentre, so their radial velocities differ from "
-        "SIMBAD's on purpose. These are first-order estimates, so please do not cite them."
+        "Positions and speeds on your launch date. A and B orbit their shared barycentre, so "
+        "their radial velocities differ from SIMBAD's on purpose. These are first-order "
+        "estimates, so please do not cite them."
+    )
+    st.subheader("A and B, waltzing")
+    orbit_years = np.arange(launch_year - 80, launch_year + 81)
+    line_chart(
+        pd.DataFrame(
+            {
+                "Year": orbit_years,
+                "Distance between A and B (AU)": [
+                    round(float(np.linalg.norm(AB_ORBIT.sky(y)[0])) / AU, 2) for y in orbit_years
+                ],
+            }
+        ),
+        "Year", "Distance between A and B (AU)", mark=launch_year,
+    )
+    st.caption(
+        "Orbit from Akeson et al. 2021. The vertical line is your launch. You will arrive dozens "
+        "of orbits later, so the planner aims at where your star will be then, not now."
     )
     st.subheader("Is Proxima staying?")
-    relative, escape = binding(PROXIMA, (ALPHA_CEN_A, ALPHA_CEN_B))
+    relative, escape = binding(PROXIMA, (ALPHA_CEN_A, ALPHA_CEN_B), launch_year)
     columns = st.columns(2)
     columns[0].metric("Proxima's speed relative to A and B", f"{relative:,.0f} m/s")
     columns[1].metric("Speed it would need to leave", f"{escape:,.0f} m/s")
     st.subheader(f"Plan B: wait for {target.name} to come to us")
-    position, velocity = target.state()
+    position, velocity = target.system_state(launch_year)
     years = np.linspace(0, 60_000, 121)
     line_chart(
         pd.DataFrame(
@@ -201,7 +228,8 @@ with stars_tab:
                 ],
             }
         ),
-        "Years from now", "Distance (ly)", mark=target.closest_approach()[0],
+        "Years from now", "Distance (ly)",
+        mark=target.closest_approach()[0] - (launch_year - target.epoch),
     )
 
 with research_tab:
