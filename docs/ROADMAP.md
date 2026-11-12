@@ -5,8 +5,15 @@ Tick items off and keep the list ordered. Add new items freely.
 
 ## Next up
 
-- [ ] Solve for the best sundiver: fastest perihelion that stays below the melting point.
-- [ ] Materials database (aluminium, graphene, dielectric stacks, ...) in place of a single melting point.
+- [ ] Materials database (aluminium, graphene, dielectric stacks, ...) in place of a single melting
+      point. It should also give each material a working temperature to replace the 90%
+      `WORKING_FRACTION` placeholder in `ass.trajectory`.
+- [ ] Source Proxima's radius (interferometry: Ségransan+ 2003 or Demory+ 2009, or Boyajian+ 2012
+      Table 6 for consistency with its luminosity), so `--periastron best` works at Proxima.
+- [ ] Finite-disc radiation pressure: the point-source force overstates the push within a few
+      stellar radii, and a near-perfect mirror on a `best` dive now goes there.
+- [ ] Decide whether the default 0.1 AU periastron at A should change. A is brighter than the Sun,
+      so the sail runs at 853 K there, above the 840 K working limit that `best` uses.
 - [ ] Mass budget: sail, booms, payload, and the areal density they imply.
 - [ ] Choose one luminosity source for A and B. Thévenin+ 2002 gives 1.519 and 0.5002, Akeson+ 2021
       Table 8 gives 1.5059 and 0.4981, and the orbit and masses already come from Akeson.
@@ -15,6 +22,8 @@ Tick items off and keep the list ordered. Add new items freely.
 
 ## Done
 
+- [x] Solve for the best sundiver: the closest dive that stays below the working temperature,
+      with radii for the Sun, A and B as a floor (iteration 5).
 - [x] Add A/B orbital motion with the Akeson+ 2021 elements, and aim at each star where it will be
       on arrival (iteration 4).
 - [x] Propagate star positions from their catalogue epoch to the launch date (iteration 4).

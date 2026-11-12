@@ -120,6 +120,7 @@ Ask the software. It runs today and it has no interest in your feelings:
 ```console
 $ uv run ass --areal-density 0.1
 Target:        Alpha Centauri A
+Dives:         0.100 AU from the Sun, 0.100 AU from the star
 Lightness:     14.547 (above 1, the Sun pushes harder than it pulls)
 Cruise speed:  508 km/s (0.169% of c)
 Capture limit: 626 km/s
@@ -137,7 +138,9 @@ All runs below dive to 0.1 AU from the Sun:
 | 1 g/m², which nobody can build | 161 km/s | 7,183 years | Arrives and stays |
 | 0.1 g/m², which nobody can even imagine building | 508 km/s | 2,458 years | Arrives and stays |
 
-Please pack accordingly.
+Pass `--perihelion best` and the software dives as close as the sail survives, stopping at 90% of
+its melting point. For the default aluminium sail that is 0.084 AU, and the 1 g/m² flight drops
+to 6,630 years. Please pack accordingly.
 
 <p align="center"><img src="docs/images/arrival.png" alt="An ancient, battered sail reaches a planet where far-future humans hold up a sign: what took you so long?" width="640"></p>
 
@@ -158,9 +161,9 @@ uv run streamlit run app/streamlit_app.py
 
 | Module | What it does |
 |---|---|
-| `ass.bodies` | The Sun and the three Centauri stars, with cited positions, motion through space and the 80-year orbit of A and B, and a check that Proxima is staying |
+| `ass.bodies` | The Sun and the three Centauri stars, with cited positions, radii (Proxima's is still missing), motion through space and the 80-year orbit of A and B, and a check that Proxima is staying |
 | `ass.sail` | Radiation-pressure thrust, lightness and equilibrium temperature |
-| `ass.trajectory` | Sundiver speed and a numerical integrator that checks the formula |
+| `ass.trajectory` | Sundiver speed, the closest dive a sail survives, and a numerical integrator that checks the formula |
 | `ass.mission` | Aiming at where the star will be on arrival, braking feasibility, and a verdict |
 | `ass.cli` | The `ass` command, for finding out how late you will arrive |
 | `ass.research` | An MCP server for arXiv, NASA ADS, SIMBAD, Gaia and astronomy feeds, so the agent can read |

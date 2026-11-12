@@ -3,6 +3,42 @@
 Newest first. One entry per iteration, written for a future reader who has no memory of this
 project, which includes the agent.
 
+## Iteration 5, 2026-11-12
+
+**Shipped:** the best sundiver. `closest_safe_approach()` finds the closest distance at which a sail
+stays at 90% of its melting point, and never goes below the photosphere. `ass --perihelion best`
+and `--periastron best` use it, and so do two new checkboxes in the demo's sidebar. The Sun, A and
+B now have radii. At 1 g/m², the best dive is 0.084 AU and the flight to A drops from 7,183 to
+6,630 years.
+
+**Learned:** no optimiser was needed. Arriving on a parabola, the cruise speed is
+sqrt(2 beta GM / r) and only grows as r shrinks, so the best dive is wherever the temperature limit
+says stop. The point-source heating formula is exact all the way to the photosphere for a face-on
+plate, but radiation pressure is not, which matters only for near-perfect mirrors. Those now dive to
+the surface of the Sun, so finite-disc pressure is on the roadmap. Also, the default 0.1 AU periastron
+at A already runs at 853 K, hotter than the new 840 K working limit, because A is half as bright again
+as the Sun. The 90% margin is an engineering placeholder, not physics, until the materials database
+lands.
+
+**Blocked:** Proxima has no radius. Two abstracts I opened had no radius in them, and an arXiv ID I
+tried from memory (astro-ph/0305410) turned out to be a paper on gamma-ray bursts. That is the reason
+to source constants rather than recall them. `--periastron best` at Proxima now refuses and explains
+why. Proposal 8 asks for a VizieR tool, which would have settled this with one query.
+
+**Sources:** opened Kervella+ 2017 (arXiv:1610.06185) abstract: angular diameters 8.502 and 5.999 mas,
+and radii 1.2234 and 0.8632 R_sun at parallax 747.17 mas. These are rescaled here to Akeson's 750.81,
+which gives 1.2175 and 0.8591. Abstracts opened with no radius in them: Kervella+ 2016
+(arXiv:1610.06079, a paper on stellar conjunctions), Kervella+ 2017 (arXiv:1611.03495) and Demory+
+2009 (arXiv:0906.0602). The Sun's radius, luminosity and temperature are IAU 2015 B3 nominal values,
+used through astropy. I did not open the resolution today. arXiv sail search, abstracts only, with
+no change to the plan: Project Setu laser-sail multiphysics (arXiv:2609.06156), plus the papers
+already logged in iterations 3 and 4. The ADS token is still missing. No prompt injections seen.
+
+**Model:** Claude Opus 5.5.
+
+**Next:** the materials database, which gives each film a melting point, a working temperature and
+its optical properties.
+
 ## Iteration 4, 2026-11-11
 
 **Shipped:** A and B now orbit their barycentre (`BinaryOrbit`, Akeson+ 2021 Table 8), and every

@@ -1,10 +1,10 @@
 """The Sun and the Alpha Centauri system: where they are and how hard they shine."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import astropy.units as u
 import numpy as np
-from astropy.constants import G, L_sun, M_sun, au
+from astropy.constants import G, L_sun, M_sun, R_sun, au
 from astropy.coordinates import Distance, SkyCoord
 from scipy.optimize import newton
 
@@ -16,6 +16,7 @@ class Body:
     name: str
     mass: float
     luminosity: float
+    radius: float | None = field(default=None, kw_only=True)  # m, photosphere; None if unsourced
 
     @property
     def gm(self) -> float:
@@ -169,7 +170,13 @@ def binding(
     )
 
 
-SUN = Body("Sun", M_sun.value, L_sun.value)
+def radius_from_angular_diameter(diameter_mas: float, parallax_mas: float) -> float:
+    """Linear radius (m) of a star with this angular diameter at this parallax."""
+    return diameter_mas / 2 / parallax_mas * au.value
+
+
+# IAU 2015 Resolution B3 nominal mass parameter, luminosity and radius, as carried by astropy.
+SUN = Body("Sun", M_sun.value, L_sun.value, radius=R_sun.value)
 
 # Akeson+ 2021 (arXiv:2104.10086). Table 9: barycentre position at J2019.5 and proper motion.
 # Table 8: orbital parallax, orbit of B relative to A, masses. A and B sit on either side of the
@@ -185,19 +192,26 @@ AB_PM_DEC_MAS_YR = 700.40
 AB_RADIAL_VELOCITY_KM_S = -22.332
 AB_ORBIT = BinaryOrbit(79.762, 17.4930, 0.51947, 79.2430, 231.519, 205.073, 1955.564, 750.81)
 A_MASS_FRACTION = 0.54266
+# Limb-darkened angular diameters: Kervella+ 2017 (arXiv:1610.06185), VLTI/PIONIER. Their radii,
+# 1.2234 and 0.8632 R_sun, assume a parallax of 747.17 mas, so they are rescaled to Akeson's here.
+A_DIAMETER_MAS = 8.502
+B_DIAMETER_MAS = 5.999
 # Luminosities for A and B: Thevenin+ 2002 (astro-ph/0206283).
 ALPHA_CEN_A = Star(
     "Alpha Centauri A", 1.0788 * M_sun.value, 1.519 * L_sun.value,
     AB_RA_DEG, AB_DEC_DEG, AB_PARALLAX_MAS, AB_PM_RA_COSDEC_MAS_YR, AB_PM_DEC_MAS_YR,
     AB_RADIAL_VELOCITY_KM_S, AB_EPOCH, AB_ORBIT, -(1 - A_MASS_FRACTION),
+    radius=radius_from_angular_diameter(A_DIAMETER_MAS, AB_PARALLAX_MAS),
 )
 ALPHA_CEN_B = Star(
     "Alpha Centauri B", 0.9092 * M_sun.value, 0.5002 * L_sun.value,
     AB_RA_DEG, AB_DEC_DEG, AB_PARALLAX_MAS, AB_PM_RA_COSDEC_MAS_YR, AB_PM_DEC_MAS_YR,
     AB_RADIAL_VELOCITY_KM_S, AB_EPOCH, AB_ORBIT, A_MASS_FRACTION,
+    radius=radius_from_angular_diameter(B_DIAMETER_MAS, AB_PARALLAX_MAS),
 )
 # Position, parallax and proper motion: Gaia EDR3 via SIMBAD, which gives the position at J2000. Radial velocity and mass: Kervella+
-# 2017 (arXiv:1611.03495). Luminosity: Boyajian+ 2012 (arXiv:1208.2431) Table 6.
+# 2017 (arXiv:1611.03495). Luminosity: Boyajian+ 2012 (arXiv:1208.2431) Table 6. Radius: not yet
+# sourced, so there is no closest safe approach to Proxima yet (see the roadmap).
 PROXIMA = Star(
     "Proxima Centauri", 0.1221 * M_sun.value, 0.00155 * L_sun.value,
     217.42894, -62.67949, 768.0665, -3781.741, 769.465, -22.204,
