@@ -15,5 +15,5 @@ Readiness: `exists`, `prototype`, `lab`, `paper` or `fantasy`. Needed: `now`, `s
 | Long-life power source, thousands of years | Sunlight disappears a few weeks after launch | paper | someday |
 | Ground receiver, kilometre-scale optical array | Hearing the reply | paper | someday |
 | Sail handling robot | Assembling a fragile mirror in orbit | prototype | someday |
-| Small vacuum chamber and a lamp | Measuring sail-film heating ourselves, as a cheap first experiment | exists | someday |
+| Small vacuum chamber and a lamp | Measuring sail-film heating ourselves, as a cheap first experiment. The best dive now depends entirely on the film's reflectivity and emissivity, which are assumed, not measured: going from 0.9 to 0.95 reflectivity moves the dive about 30% closer to the Sun | exists | soon |
 | A second Sun, for testing | Would make the environmental tests much easier | fantasy | someday |

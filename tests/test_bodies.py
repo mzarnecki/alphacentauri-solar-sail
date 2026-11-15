@@ -3,7 +3,7 @@ from dataclasses import replace
 import astropy.units as u
 import numpy as np
 import pytest
-from astropy.constants import M_sun, au
+from astropy.constants import M_sun, R_sun, au, sigma_sb
 
 from ass.bodies import (
     AB_ORBIT,
@@ -24,6 +24,22 @@ def light_years(metres):
 
 def test_sun_gm():
     assert SUN.gm == pytest.approx(1.327e20, rel=1e-3)
+
+
+def test_sun_radius_and_luminosity_give_its_nominal_temperature():
+    # IAU 2015 Resolution B3: nominal effective temperature 5772 K.
+    flux = SUN.luminosity / (4 * np.pi * SUN.radius**2)
+    assert (flux / sigma_sb.value) ** 0.25 == pytest.approx(5772, rel=1e-3)
+
+
+@pytest.mark.parametrize(("star", "published"), [(ALPHA_CEN_A, 1.2234), (ALPHA_CEN_B, 0.8632)])
+def test_radii_match_kervella_after_rescaling_to_akesons_parallax(star, published):
+    # Kervella+ 2017 (arXiv:1610.06185) radii in R_sun, derived with a parallax of 747.17 mas.
+    assert star.radius * 750.81 / 747.17 / R_sun.value == pytest.approx(published, rel=1e-3)
+
+
+def test_proxima_radius_is_admittedly_unknown():
+    assert PROXIMA.radius is None
 
 
 @pytest.mark.parametrize(

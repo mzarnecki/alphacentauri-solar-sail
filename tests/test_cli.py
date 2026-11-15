@@ -25,13 +25,25 @@ def test_target_and_launch_year_flow_into_the_report(capsys):
     assert 800 < arrival_year(capsys.readouterr().out) - arrival_year(first) < 1000
 
 
+def test_best_dive_goes_closer_and_arrives_sooner(capsys):
+    main([])
+    fixed = capsys.readouterr().out
+    main(["--perihelion", "best", "--periastron", "best"])
+    best = capsys.readouterr().out
+    assert "Dives:         0.084 AU from the Sun, 0.103 AU from the star" in best
+    assert "Peak temp:     840 K" in best
+    assert arrival_year(best) < arrival_year(fixed)
+
+
 @pytest.mark.parametrize(
     "argv",
     [
         ["--areal-density", "0"],
         ["--perihelion", "0"],
+        ["--perihelion", "closer"],
         ["--periastron", "-1"],
         ["--reflectivity", "2"],
+        ["--target", "proxima", "--periastron", "best"],
     ],
 )
 def test_bad_input_is_a_usage_error_not_a_traceback(argv, capsys):

@@ -23,7 +23,12 @@ from ass.bodies import (
 from ass.mission import intercept, plan
 from ass.research import FEEDS, query_simbad, read_feed, search_arxiv
 from ass.sail import Sail
-from ass.trajectory import cruise_speed, integrate_dive
+from ass.trajectory import (
+    WORKING_FRACTION,
+    closest_safe_approach,
+    cruise_speed,
+    integrate_dive,
+)
 
 AU = u.au.to(u.m)
 LY = u.lyr.to(u.m)
@@ -77,8 +82,13 @@ with st.sidebar:
         help="LightSail 2 is about 156. Below about 1.5, the Sun repels the sail.",
     )
     reflectivity = st.slider("Reflectivity", 0.5, 1.0, 0.9, 0.01, key="reflectivity")
+    best_perihelion = st.checkbox(
+        "Dive as close to the Sun as the sail survives", key="best_perihelion",
+        help=f"Stops where the sail reaches {WORKING_FRACTION:.0%} of its melting point.",
+    )
     perihelion = st.number_input(
-        "Closest approach to the Sun (AU)", 0.01, 5.0, 0.1, 0.01, key="perihelion"
+        "Closest approach to the Sun (AU)", 0.01, 5.0, 0.1, 0.01, key="perihelion",
+        disabled=best_perihelion,
     )
     st.header("Your destination")
     target = TARGETS[
@@ -86,12 +96,28 @@ with st.sidebar:
             "Star", list(TARGETS), format_func=lambda key: TARGETS[key].name, key="target"
         )
     ]
+    best_periastron = st.checkbox("Dive as close to the star as the sail survives", key="best_peri")
     periastron = st.number_input(
-        "Closest approach to the star (AU)", 0.01, 5.0, 0.1, 0.01, key="periastron"
+        "Closest approach to the star (AU)", 0.01, 5.0, 0.1, 0.01, key="periastron",
+        disabled=best_periastron,
     )
     launch_year = st.number_input("Launch year", 2026, 100_000, date.today().year, key="launch")
 
 sail = Sail(density / 1000, reflectivity)
+with st.sidebar:
+    for wanted, body, label in [(best_perihelion, SUN, "Sun"), (best_periastron, target, "star")]:
+        if not wanted:
+            continue
+        try:
+            best = closest_safe_approach(sail, body) / AU
+        except ValueError as error:
+            st.warning(f"{error} Using the number above.")
+            continue
+        st.caption(f"Best dive: {best:.4f} AU from the {label}.")
+        if body is SUN:
+            perihelion = best
+        else:
+            periastron = best
 mission_tab, sail_tab, trajectory_tab, stars_tab, research_tab = st.tabs(
     ["Mission", "Sail", "Trajectory", "Stars", "Research feed"]
 )

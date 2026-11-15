@@ -46,6 +46,23 @@ def test_changing_the_star_changes_the_report(app):
     assert "Plan B: wait for Proxima Centauri" in [s.value for s in app.subheader][-2]
 
 
+def test_best_dives_go_as_close_as_the_sail_survives(app):
+    app.checkbox(key="best_perihelion").check().run()
+    app.checkbox(key="best_peri").check().run()
+    assert not app.exception
+    captions = [caption.value for caption in app.sidebar.caption]
+    assert "Best dive: 0.0837 AU from the Sun." in captions
+    assert "Best dive: 0.1031 AU from the star." in captions
+    assert {m.label: m.value for m in app.metric}["Cruise speed"] == "176 km/s"
+
+
+def test_best_dive_at_proxima_explains_itself(app):
+    app.selectbox(key="target").select("proxima").run()
+    app.checkbox(key="best_peri").check().run()
+    assert not app.exception
+    assert "no radius on file" in app.sidebar.warning[0].value
+
+
 def test_stars_tab_shows_the_binary_orbit(app):
     assert "A and B, waltzing" in [s.value for s in app.subheader]
 

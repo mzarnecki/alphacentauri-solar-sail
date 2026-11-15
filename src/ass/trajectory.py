@@ -1,14 +1,40 @@
 """The sundiver manoeuvre: fall towards a star edge-on, turn face-on at closest approach, leave."""
 
 import numpy as np
+from astropy.constants import sigma_sb
 from scipy.integrate import solve_ivp
 
 from ass.bodies import Body
 from ass.sail import Sail
 
+# Fraction of the melting point the sail may reach in a "best" dive. An engineering placeholder,
+# not physics: metals soften well before they melt. The materials database will replace it.
+WORKING_FRACTION = 0.9
+
 
 def parabolic_speed(body: Body, r: float) -> float:
     return np.sqrt(2 * body.gm / r)
+
+
+def closest_safe_approach(sail: Sail, body: Body, max_temperature: float | None = None) -> float:
+    """Closest distance (m) to body at which the face-on sail stays at or below max_temperature.
+
+    Inverts Sail.temperature, T^4 = (1 - R) L / (4 pi r^2 eps sigma), and never goes below the
+    photosphere. The cruise speed after a dive from a parabolic arrival, sqrt(2 beta GM / r), only
+    grows as r shrinks, so this is also the fastest dive the sail survives: the best sundiver.
+    max_temperature defaults to WORKING_FRACTION of the melting point.
+    shortcut: treats the star as a point. That is exact for the heating of a face-on plate (the
+    flux from a uniform sphere falls as R^2 / r^2 all the way down), but radiation pressure from a
+    finite disc is weaker than the point formula within a few radii. Upgrade before diving there.
+    """
+    if body.radius is None:
+        raise ValueError(f"{body.name} has no radius on file yet, so how close is too close?")
+    limit = WORKING_FRACTION * sail.melting_point if max_temperature is None else max_temperature
+    if limit <= 0:
+        raise ValueError("max_temperature must be positive")
+    absorbed = (1 - sail.reflectivity) * body.luminosity / (4 * np.pi)
+    thermal = np.sqrt(absorbed / (sail.emissivity_total * sigma_sb.value * limit**4))
+    return float(max(thermal, body.radius))
 
 
 def cruise_speed(sail: Sail, body: Body, r_peri: float, v_peri: float | None = None) -> float:
