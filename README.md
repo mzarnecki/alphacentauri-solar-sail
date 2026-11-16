@@ -135,7 +135,7 @@ All runs below dive to 0.1 AU from the Sun:
 | Spacecraft (grams per m², payload included) | Cruise speed | Flight time | Verdict |
 |---|---|---|---|
 | 156 g/m², LightSail 2 class | 13 km/s | Never | Alpha Centauri moves sideways at 23 km/s and simply outruns it |
-| 1 g/m², which nobody can build | 161 km/s | 7,183 years | Arrives and stays |
+| 1 g/m², which nobody can build | 161 km/s | 7,184 years | Arrives and stays |
 | 0.1 g/m², which nobody can even imagine building | 508 km/s | 2,458 years | Arrives and stays |
 
 Pass `--perihelion best` and the software dives as close as the sail survives, stopping at 90% of
@@ -162,7 +162,7 @@ uv run streamlit run app/streamlit_app.py
 | Module | What it does |
 |---|---|
 | `ass.bodies` | The Sun and the three Centauri stars, with cited positions, radii (Proxima's is still missing), motion through space and the 80-year orbit of A and B, and a check that Proxima is staying |
-| `ass.sail` | Radiation-pressure thrust, lightness and equilibrium temperature |
+| `ass.sail` | Radiation-pressure thrust, lightness and equilibrium temperature, with the star treated as a disc rather than a point when the sail gets close |
 | `ass.trajectory` | Sundiver speed, the closest dive a sail survives, and a numerical integrator that checks the formula |
 | `ass.mission` | Aiming at where the star will be on arrival, braking feasibility, and a verdict |
 | `ass.cli` | The `ass` command, for finding out how late you will arrive |

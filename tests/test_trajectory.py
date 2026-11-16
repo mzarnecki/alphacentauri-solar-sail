@@ -3,7 +3,7 @@ import pytest
 from astropy.constants import au, sigma_sb
 
 from ass.bodies import PROXIMA, SUN
-from ass.sail import Sail
+from ass.sail import Sail, disc_work_factor
 from ass.trajectory import (
     WORKING_FRACTION,
     closest_safe_approach,
@@ -56,9 +56,31 @@ def test_parabolic_speed_at_one_au():
 
 
 def test_cruise_speed_from_parabolic_arrival_is_sqrt_two_beta_gm_over_r():
+    # Exact for a point source, and Proxima is one until it gets a radius.
     sail = Sail(1e-3)
-    expected = np.sqrt(2 * sail.lightness(SUN) * SUN.gm / (0.1 * au.value))
-    assert cruise_speed(sail, SUN, 0.1 * au.value) == pytest.approx(expected)
+    expected = np.sqrt(2 * sail.lightness(PROXIMA) * PROXIMA.gm / (0.1 * au.value))
+    assert cruise_speed(sail, PROXIMA, 0.1 * au.value) == pytest.approx(expected)
+    # The Sun's finite disc costs 0.1 AU dives about (R/r)^2 / 24 of that speed.
+    point = np.sqrt(2 * sail.lightness(SUN) * SUN.gm / (0.1 * au.value))
+    u = SUN.radius / (0.1 * au.value)
+    assert cruise_speed(sail, SUN, 0.1 * au.value) == pytest.approx(point * (1 - u**2 / 24))
+
+
+def test_finite_disc_costs_a_mirror_at_the_photosphere_five_percent_of_its_speed():
+    # Opening at the photosphere, light delivers (2/3) (3 pi / 4 - 1) = 0.904 of the point-source
+    # energy: the push starts at 2/3 but recovers within a few radii.
+    mirror = Sail(1e-3, reflectivity=1.0)
+    point = np.sqrt(2 * mirror.lightness(SUN) * SUN.gm / SUN.radius)
+    ratio = cruise_speed(mirror, SUN, SUN.radius) / point
+    assert ratio == pytest.approx(np.sqrt(2 / 3 * (3 * np.pi / 4 - 1)), rel=1e-9)
+    assert ratio == pytest.approx(0.951, abs=5e-4)
+
+
+def test_finite_disc_never_moves_the_best_dive_outwards():
+    # The light's work from r to infinity grows as r shrinks, so closer is still faster.
+    mirror = Sail(1e-3, reflectivity=1.0)
+    speeds = [cruise_speed(mirror, SUN, r) for r in np.geomspace(1, 50, 200) * SUN.radius]
+    assert all(np.diff(speeds) < 0)
 
 
 def test_closer_dive_goes_faster():
@@ -72,17 +94,27 @@ def test_heavy_slow_sail_stays_bound():
 
 
 @pytest.mark.parametrize(
-    ("density", "v_peri"),
-    [(1e-3, None), (1e-3, 0.0), (0.1, None)],
-    ids=["light-parabolic", "light-from-rest", "heavy-decelerating"],
+    ("density", "reflectivity", "r_peri", "v_peri"),
+    [
+        (1e-3, 0.9, 0.1 * au.value, None),
+        (1e-3, 0.9, 0.1 * au.value, 0.0),
+        (0.1, 0.9, 0.1 * au.value, None),
+        (1e-3, 1.0, SUN.radius, None),
+    ],
+    ids=["light-parabolic", "light-from-rest", "heavy-decelerating", "mirror-at-photosphere"],
 )
-def test_integrator_conserves_the_energy_the_analytic_formula_assumes(density, v_peri):
-    sail = Sail(density)
-    r_peri, r_end = 0.1 * au.value, 50 * au.value
+def test_integrator_conserves_the_energy_the_analytic_formula_assumes(
+    density, reflectivity, r_peri, v_peri
+):
+    # The integrator applies the finite-disc push point by point, the formula uses its closed-form
+    # integral, so the photosphere case checks one against the other where the disc matters most.
+    sail = Sail(density, reflectivity)
+    r_end = 50 * au.value
     solution = integrate_dive(sail, SUN, r_peri, r_end, v_peri)
     final = solution.y[:, -1]
 
     assert np.hypot(*final[:2]) == pytest.approx(r_end, rel=1e-6)
     v_inf = cruise_speed(sail, SUN, r_peri, v_peri)
-    expected = np.sqrt(v_inf**2 + 2 * (1 - sail.lightness(SUN)) * SUN.gm / r_end)
+    light = sail.lightness(SUN) * disc_work_factor(SUN.radius, r_end)
+    expected = np.sqrt(v_inf**2 + 2 * (1 - light) * SUN.gm / r_end)
     assert np.hypot(*final[2:]) == pytest.approx(expected, rel=1e-6)
