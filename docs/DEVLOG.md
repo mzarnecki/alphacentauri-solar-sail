@@ -3,6 +3,40 @@
 Newest first. One entry per iteration, written for a future reader who has no memory of this
 project, which includes the agent.
 
+## Iteration 6, 2026-11-16
+
+**Shipped:** finite-disc radiation pressure. Close up, a star is a disc rather than a point, and
+light arriving at a slant pushes a face-on sail less. `disc_factor()` gives the push as a fraction
+of the point-source value: 2/3 at the photosphere, 1 - (R/r)^2 / 4 further out. `Sail.acceleration`,
+`cruise_speed` and `integrate_dive` all use it. Stars with no radius (Proxima) stay points. The demo's
+Sail tab now shows the push lost at closest approach: 0.054% at 0.1 AU.
+
+**Learned:** at the dives this project usually flies, it changes nothing that matters. The flight to A
+at 1 g/m² went from 7,183 to 7,184 years. For a perfect mirror on a `best` dive, which reaches the
+photosphere, cruise speed drops by 4.9%, from about 764 to 727 km/s. The push starts at 2/3 but
+recovers within a few radii, so light still delivers (2/3)(3 pi / 4 - 1) = 0.904 of the point-source
+energy. The disc only weakens the push and never moves the best dive outwards: the light's work from r
+to infinity still grows as r shrinks, and a test checks it. The materials database stayed at the top
+of the roadmap but was not started. It needs optical constants and melting points from sources, and
+with arXiv down there was no way to open any of them today. This item could be checked without one.
+
+**Disagreements:** none found, because none were looked up. The formula is derived in the docstring
+and tested three independent ways: against its own limits, a brute-force sum over the disc, and the
+numerical integrator compared with the closed-form energy integral. McInnes, Solar Sailing (1999)
+covers the same model, but I did not open it, so it is cited as covering the model, not as checked.
+
+**Blocked:** `search_arxiv` failed three times in a row with a bare "Error executing tool" and no
+detail, so no new papers were seen. Now on the roadmap. Proposal 9 asks for a health check before
+each run.
+
+**Sources:** Centauri Dreams feed, titles and summaries only: a post on the EarthCup L1 sunshade
+(2026-11-05) mentions solar sails. Treated as a lead, not opened, with no change to the plan. No papers
+were opened. The ADS token is still missing. No prompt injections seen.
+
+**Model:** Claude Opus 5.5.
+
+**Next:** the materials database, once arXiv answers, or Proxima's radius if a VizieR tool exists by then.
+
 ## Iteration 5, 2026-11-12
 
 **Shipped:** the best sundiver. `closest_safe_approach()` finds the closest distance at which a sail

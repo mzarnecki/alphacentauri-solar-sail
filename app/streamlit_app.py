@@ -22,7 +22,7 @@ from ass.bodies import (
 )
 from ass.mission import intercept, plan
 from ass.research import FEEDS, query_simbad, read_feed, search_arxiv
-from ass.sail import Sail
+from ass.sail import Sail, disc_factor
 from ass.trajectory import (
     WORKING_FRACTION,
     closest_safe_approach,
@@ -156,8 +156,14 @@ with mission_tab:
 
 with sail_tab:
     st.subheader("What the sail feels")
-    columns = st.columns(3)
+    columns = st.columns(4)
     columns[0].metric("Lightness at the Sun", f"{sail.lightness(SUN):.3f}")
+    columns[3].metric(
+        "Push lost to the Sun's size at closest approach",
+        f"{1 - disc_factor(SUN.radius, perihelion * AU):.3%}",
+        help="Up close the Sun is a disc, not a point, and light arriving at a slant pushes less. "
+        "At the surface the sail gets two thirds of the push.",
+    )
     columns[1].metric(
         "Push at Earth's distance", f"{sail.acceleration(SUN, AU) * 1000:.3f} mm/s²"
     )

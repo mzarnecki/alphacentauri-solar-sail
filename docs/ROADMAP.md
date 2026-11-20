@@ -10,8 +10,10 @@ Tick items off and keep the list ordered. Add new items freely.
       `WORKING_FRACTION` placeholder in `ass.trajectory`.
 - [ ] Source Proxima's radius (interferometry: Ségransan+ 2003 or Demory+ 2009, or Boyajian+ 2012
       Table 6 for consistency with its luminosity), so `--periastron best` works at Proxima.
-- [ ] Finite-disc radiation pressure: the point-source force overstates the push within a few
-      stellar radii, and a near-perfect mirror on a `best` dive now goes there.
+- [ ] Find out why `search_arxiv` fails with a bare "Error executing tool" (iteration 6, three
+      queries in a row), and make `ass.research` report the HTTP status or exception instead.
+- [ ] Limb darkening in the finite-disc push. The Sun's edge is dimmer than its centre, so the
+      uniform disc slightly understates the push near the photosphere. Needs a sourced law.
 - [ ] Decide whether the default 0.1 AU periastron at A should change. A is brighter than the Sun,
       so the sail runs at 853 K there, above the 840 K working limit that `best` uses.
 - [ ] Mass budget: sail, booms, payload, and the areal density they imply.
@@ -22,6 +24,8 @@ Tick items off and keep the list ordered. Add new items freely.
 
 ## Done
 
+- [x] Finite-disc radiation pressure for a face-on sail, uniform disc, in the force, the cruise
+      speed and the integrator (iteration 6).
 - [x] Solve for the best sundiver: the closest dive that stays below the working temperature,
       with radii for the Sun, A and B as a floor (iteration 5).
 - [x] Add A/B orbital motion with the Akeson+ 2021 elements, and aim at each star where it will be

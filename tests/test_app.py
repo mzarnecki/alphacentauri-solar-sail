@@ -29,6 +29,8 @@ def test_default_view_reports_the_mission(app):
     metrics = {metric.label: metric.value for metric in app.metric}
     assert metrics["Cruise speed"] == "161 km/s"
     assert metrics["Lightness at the Sun"] == "1.455"
+    # 1 - (R/r)^2 / 4 at 0.1 AU, with R the Sun's radius.
+    assert metrics["Push lost to the Sun's size at closest approach"] == "0.054%"
     assert app.info[0].value.startswith("CAPTURE")
     assert metrics["Proxima's speed relative to A and B"] == "274 m/s"
     assert metrics["Speed it would need to leave"] == "556 m/s"

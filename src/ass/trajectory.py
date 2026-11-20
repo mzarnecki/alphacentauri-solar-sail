@@ -5,7 +5,7 @@ from astropy.constants import sigma_sb
 from scipy.integrate import solve_ivp
 
 from ass.bodies import Body
-from ass.sail import Sail
+from ass.sail import Sail, disc_work_factor
 
 # Fraction of the melting point the sail may reach in a "best" dive. An engineering placeholder,
 # not physics: metals soften well before they melt. The materials database will replace it.
@@ -23,9 +23,9 @@ def closest_safe_approach(sail: Sail, body: Body, max_temperature: float | None 
     photosphere. The cruise speed after a dive from a parabolic arrival, sqrt(2 beta GM / r), only
     grows as r shrinks, so this is also the fastest dive the sail survives: the best sundiver.
     max_temperature defaults to WORKING_FRACTION of the melting point.
-    shortcut: treats the star as a point. That is exact for the heating of a face-on plate (the
-    flux from a uniform sphere falls as R^2 / r^2 all the way down), but radiation pressure from a
-    finite disc is weaker than the point formula within a few radii. Upgrade before diving there.
+    The point-source heating formula is exact for a face-on plate all the way down (the flux from a
+    uniform sphere falls as R^2 / r^2). The finite disc only weakens the push, by at most a third,
+    and that cannot move the best dive: see test_finite_disc_never_moves_the_best_dive_outwards.
     """
     if body.radius is None:
         raise ValueError(f"{body.name} has no radius on file yet, so how close is too close?")
@@ -44,7 +44,8 @@ def cruise_speed(sail: Sail, body: Body, r_peri: float, v_peri: float | None = N
     fastest arrival speed the sail can shed at a star and still end up bound to it.
     """
     v = parabolic_speed(body, r_peri) if v_peri is None else v_peri
-    v_inf_squared = v**2 - 2 * (1 - sail.lightness(body)) * body.gm / r_peri
+    light = sail.lightness(body) * disc_work_factor(body.radius, r_peri)
+    v_inf_squared = v**2 - 2 * (1 - light) * body.gm / r_peri
     if v_inf_squared <= 0:
         raise ValueError("sail stays bound: too heavy or too slow to escape")
     return float(np.sqrt(v_inf_squared))
@@ -59,10 +60,11 @@ def integrate_dive(
     the mission needs a flight-grade propagator.
     """
     v = parabolic_speed(body, r_peri) if v_peri is None else v_peri
-    effective_gm = body.gm * (1 - sail.lightness(body))
 
     def rhs(_t, s):
-        return [s[2], s[3], *(-effective_gm * s[:2] / np.hypot(s[0], s[1]) ** 3)]
+        r = np.hypot(s[0], s[1])
+        outward = sail.acceleration(body, r) - body.gm / r**2
+        return [s[2], s[3], *(outward * s[:2] / r)]
 
     def reached_end(_t, s):
         return np.hypot(s[0], s[1]) - r_end
