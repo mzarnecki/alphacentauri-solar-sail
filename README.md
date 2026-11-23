@@ -166,7 +166,7 @@ uv run streamlit run app/streamlit_app.py
 | `ass.trajectory` | Sundiver speed, the closest dive a sail survives, and a numerical integrator that checks the formula |
 | `ass.mission` | Aiming at where the star will be on arrival, braking feasibility, and a verdict |
 | `ass.cli` | The `ass` command, for finding out how late you will arrive |
-| `ass.research` | An MCP server for arXiv, NASA ADS, SIMBAD, Gaia and astronomy feeds, so the agent can read |
+| `ass.research` | An MCP server for arXiv, NASA ADS, SIMBAD, Gaia, arXiv's daily listings and astronomy feeds, so the agent can read, and can tell when the internet has stopped answering |
 | `app/` | The mission control web app |
 
 Everything else is on the [roadmap](docs/ROADMAP.md). It is a long roadmap.

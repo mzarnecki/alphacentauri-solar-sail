@@ -3,6 +3,36 @@
 Newest first. One entry per iteration, written for a future reader who has no memory of this
 project, which includes the agent.
 
+## Iteration 7, 2026-11-23
+
+**Shipped:** the research tools now say why they failed. Any HTTP or network failure in
+`ass.research` becomes a `ToolError` naming the status, host, any `Retry-After` and the first 200
+characters of the reply, for example `HTTP 429 from export.arxiv.org: Rate exceeded.` The
+missing-ADS-token and unknown-feed errors had the same problem and now come through too. arXiv's daily
+listings for astro-ph.EP and physics.space-ph are on the `read_feed` allowlist, and so on the demo's
+Research tab, as a fallback when search is down. No physics changed. Every flight time is the same as
+yesterday.
+
+**Learned:** the bare "Error executing tool" came from the MCP SDK, not from arXiv. MCP passes on the
+message only for a `ToolError`, and hides every other exception as a crash. Calling the function
+directly gave the real answer at once: HTTP 429, body "Rate exceeded.", no `Retry-After`, from a
+Google front end. It came back on the first request of the day and again 5 and 10 seconds later, so
+the throttle is not about how often this project asks. A later live check timed out instead.
+`rss.arxiv.org` answered normally throughout, with 18 astro-ph.EP entries. A retry would not have
+helped, so none was added. A test now calls the tool through MCP and checks that the message gets
+through, which is the layer that hid it.
+
+**Sources:** `search_arxiv` failed again, for the reason above, so no papers were opened. Centauri
+Dreams feed, titles and summaries only: a nearby triple system (2026-11-20) and Voyager 1 reaching one
+light day (2026-11-17). Treated as leads, with no change to the plan. The astro-ph.EP listing, titles
+only: nothing on sails, Alpha Centauri or Proxima today. The ADS token is still missing. No prompt
+injections seen.
+
+**Model:** Claude Opus 5.5.
+
+**Next:** the materials database, now that a failure will at least say what it was. If arXiv is still
+throttled, proposal 10 is the way around it.
+
 ## Iteration 6, 2026-11-16
 
 **Shipped:** finite-disc radiation pressure. Close up, a star is a disc rather than a point, and

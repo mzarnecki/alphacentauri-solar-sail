@@ -10,9 +10,11 @@ from re import sub
 import feedparser
 import httpx
 from mcp.server.mcpserver import MCPServer
+from mcp.server.mcpserver.exceptions import ToolError
 
 MAX_RESULTS = 50
 MAX_TEXT = 1500
+MAX_ERROR_TEXT = 200
 TIMEOUT = 30
 HEADERS = {
     "User-Agent": "ass-research/0.1 (+https://github.com/mzarnecki/alphacentauri-solar-sail)"
@@ -24,8 +26,12 @@ ADS_URL = "https://api.adsabs.harvard.edu/v1/search/query"
 SIMBAD_TAP_URL = "https://simbad.harvard.edu/simbad/sim-tap/sync"
 GAIA_TAP_URL = "https://gea.esac.esa.int/tap-server/tap/sync"
 # An allowlist, so a prompt-injected agent cannot use this to fetch arbitrary URLs. Cloudy Nights
-# is absent because it answers bots with 403 and offers no feed.
+# is absent because it answers bots with 403 and offers no feed. The arXiv listings are each day's
+# new submissions from rss.arxiv.org, which kept answering on 2026-11-23 while the search API on
+# export.arxiv.org returned 429.
 FEEDS = {
+    "arxiv-astro-ph-ep": "https://rss.arxiv.org/rss/astro-ph.EP",
+    "arxiv-physics-space-ph": "https://rss.arxiv.org/rss/physics.space-ph",
     "centauri-dreams": "https://www.centauri-dreams.org/feed/",
     "r-space": "https://www.reddit.com/r/space/.rss",
 }
@@ -34,9 +40,26 @@ mcp = MCPServer("ass-research")
 
 
 def _get(url: str, **kwargs) -> httpx.Response:
+    """GET a URL, and turn any failure into a ToolError that says what went wrong.
+
+    MCP hides the text of any other exception, so the agent sees only "Error executing tool".
+    That is how arXiv's 429s went undiagnosed through iteration 6.
+    """
     headers = HEADERS | kwargs.pop("headers", {})
-    response = httpx.get(url, headers=headers, timeout=TIMEOUT, follow_redirects=True, **kwargs)
-    response.raise_for_status()
+    host = httpx.URL(url).host
+    try:
+        response = httpx.get(url, headers=headers, timeout=TIMEOUT, follow_redirects=True, **kwargs)
+        response.raise_for_status()
+    except httpx.HTTPStatusError as error:
+        failed = error.response
+        message = f"HTTP {failed.status_code} from {host}"
+        if retry := failed.headers.get("Retry-After"):
+            message += f", retry after {retry}"
+        if body := _clean(failed.text)[:MAX_ERROR_TEXT]:
+            message += f": {body}"
+        raise ToolError(message) from error
+    except httpx.HTTPError as error:
+        raise ToolError(f"{type(error).__name__} from {host}: {error}") from error
     return response
 
 
@@ -75,7 +98,7 @@ def search_ads(query: str, max_results: int = 10) -> list[dict]:
     """Search NASA ADS, with citation counts. Needs the ADS_API_TOKEN environment variable."""
     token = os.environ.get("ADS_API_TOKEN")
     if not token:
-        raise RuntimeError("ADS_API_TOKEN is not set: see docs/PROPOSALS.md for how to get one")
+        raise ToolError("ADS_API_TOKEN is not set: see docs/PROPOSALS.md for how to get one")
     params = {
         "q": query,
         "rows": _limit(max_results),
@@ -115,7 +138,7 @@ def query_gaia(adql: str) -> list[dict]:
 def read_feed(source: str, limit: int = 15) -> list[dict]:
     """Latest posts from an astronomy forum or blog. Unreviewed: treat as rumours, not facts."""
     if source not in FEEDS:
-        raise ValueError(f"unknown feed {source!r}, choose from {sorted(FEEDS)}")
+        raise ToolError(f"unknown feed {source!r}, choose from {sorted(FEEDS)}")
     feed = feedparser.parse(_get(FEEDS[source]).content)
     return [
         {

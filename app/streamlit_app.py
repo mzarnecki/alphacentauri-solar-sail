@@ -4,11 +4,11 @@ from datetime import date
 
 import altair as alt
 import astropy.units as u
-import httpx
 import numpy as np
 import pandas as pd
 import streamlit as st
 from astropy.constants import c
+from mcp.server.mcpserver.exceptions import ToolError
 
 from ass.bodies import (
     AB_ORBIT,
@@ -282,7 +282,7 @@ with research_tab:
                     results = query_simbad(query)
                 else:
                     results = read_feed(source, 10)
-        except (httpx.HTTPError, ValueError, KeyError) as error:  # third parties fail, demo stays up
+        except (ToolError, ValueError, KeyError) as error:  # third parties fail, demo stays up
             st.error(f"{source} did not answer: {error}")
         else:
             st.dataframe(pd.DataFrame(results), hide_index=True)

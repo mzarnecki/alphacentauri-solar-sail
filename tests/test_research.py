@@ -2,6 +2,7 @@ import asyncio
 
 import httpx
 import pytest
+from mcp.server.mcpserver.exceptions import ToolError, UnexpectedToolError
 
 from ass import research
 
@@ -43,15 +44,45 @@ def test_search_arxiv_parses_and_strips_html(web):
     assert "ass-research" in calls[0][1]["headers"]["User-Agent"]
 
 
-def test_http_errors_are_raised_not_swallowed(web):
-    web(status=503)
-    with pytest.raises(httpx.HTTPStatusError):
+def test_http_errors_say_status_host_and_body(web):
+    # What export.arxiv.org really sent on 2026-11-23: a 429, no Retry-After, a 14-byte body.
+    web(content=b"Rate exceeded.", status=429)
+    with pytest.raises(ToolError, match=r"^HTTP 429 from export\.arxiv\.org: Rate exceeded\.$"):
         research.search_arxiv("x")
+
+
+def test_http_errors_pass_on_retry_after_and_cut_long_bodies(monkeypatch):
+    def fake_get(url, **_):
+        return httpx.Response(503, headers={"Retry-After": "120"}, content=b"<p>down</p>" * 100,
+                              request=httpx.Request("GET", url))
+
+    monkeypatch.setattr(research.httpx, "get", fake_get)
+    with pytest.raises(ToolError, match=r"^HTTP 503 from export\.arxiv\.org, retry after 120: down") as info:
+        research.search_arxiv("x")
+    assert len(str(info.value)) < research.MAX_ERROR_TEXT + 60
+
+
+def test_network_failures_say_what_and_where(monkeypatch):
+    def fake_get(url, **_):
+        raise httpx.ConnectTimeout("timed out")
+
+    monkeypatch.setattr(research.httpx, "get", fake_get)
+    with pytest.raises(ToolError, match=r"^ConnectTimeout from gea\.esac\.esa\.int: timed out$"):
+        research.query_gaia("SELECT 1")
+
+
+def test_the_agent_sees_the_real_error_through_mcp(web):
+    # Before iteration 7 this arrived as a bare "Error executing tool search_arxiv".
+    web(content=b"Rate exceeded.", status=429)
+    with pytest.raises(ToolError) as info:
+        asyncio.run(research.mcp.call_tool("search_arxiv", {"query": "x"}))
+    assert not isinstance(info.value, UnexpectedToolError)
+    assert str(info.value).endswith("HTTP 429 from export.arxiv.org: Rate exceeded.")
 
 
 def test_search_ads_needs_a_token(monkeypatch):
     monkeypatch.delenv("ADS_API_TOKEN", raising=False)
-    with pytest.raises(RuntimeError, match="ADS_API_TOKEN"):
+    with pytest.raises(ToolError, match="ADS_API_TOKEN"):
         research.search_ads("sail")
 
 
@@ -81,9 +112,14 @@ def test_read_feed_limits_results(web):
     assert [r["link"] for r in results] == ["https://example.org/1"]
 
 
+def test_arxiv_listings_are_on_the_allowlist():
+    assert research.FEEDS["arxiv-astro-ph-ep"] == "https://rss.arxiv.org/rss/astro-ph.EP"
+    assert research.FEEDS["arxiv-physics-space-ph"] == "https://rss.arxiv.org/rss/physics.space-ph"
+
+
 def test_read_feed_only_fetches_the_allowlist(web):
     calls = web(ATOM)
-    with pytest.raises(ValueError, match="unknown feed"):
+    with pytest.raises(ToolError, match="unknown feed"):
         research.read_feed("https://evil.example/")
     assert calls == []
 

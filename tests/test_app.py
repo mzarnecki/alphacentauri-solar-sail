@@ -74,6 +74,7 @@ def test_stars_tab_shows_the_binary_orbit(app):
     [
         ("arXiv", {"content": ATOM}),
         ("centauri-dreams", {"content": ATOM}),
+        ("arxiv-astro-ph-ep", {"content": ATOM}),
         ("SIMBAD", {"json": {"metadata": [{"name": "main_id"}], "data": [["alf Cen A"]]}}),
     ],
 )

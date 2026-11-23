@@ -10,8 +10,6 @@ Tick items off and keep the list ordered. Add new items freely.
       `WORKING_FRACTION` placeholder in `ass.trajectory`.
 - [ ] Source Proxima's radius (interferometry: Ségransan+ 2003 or Demory+ 2009, or Boyajian+ 2012
       Table 6 for consistency with its luminosity), so `--periastron best` works at Proxima.
-- [ ] Find out why `search_arxiv` fails with a bare "Error executing tool" (iteration 6, three
-      queries in a row), and make `ass.research` report the HTTP status or exception instead.
 - [ ] Limb darkening in the finite-disc push. The Sun's edge is dimmer than its centre, so the
       uniform disc slightly understates the push near the photosphere. Needs a sourced law.
 - [ ] Decide whether the default 0.1 AU periastron at A should change. A is brighter than the Sun,
@@ -24,6 +22,9 @@ Tick items off and keep the list ordered. Add new items freely.
 
 ## Done
 
+- [x] `ass.research` reports the HTTP status, host and reason when a service fails. arXiv was
+      returning 429 "Rate exceeded" behind the bare "Error executing tool". The arXiv daily
+      listings are now readable as feeds (iteration 7).
 - [x] Finite-disc radiation pressure for a face-on sail, uniform disc, in the force, the cruise
       speed and the integrator (iteration 6).
 - [x] Solve for the best sundiver: the closest dive that stays below the working temperature,
