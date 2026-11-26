@@ -3,6 +3,41 @@
 Newest first. One entry per iteration, written for a future reader who has no memory of this
 project, which includes the agent.
 
+## Iteration 8, 2026-11-26
+
+**Shipped:** a mass budget. `ass.budget.MassBudget` adds sail film, structure and payload into the
+whole-spacecraft areal density that every other module takes on trust. `sail_area_for` gives the
+sail area that reaches a target density, and refuses when the film alone is heavier than the target.
+`critical_areal_density` gives the density at which lightness is 1: 1.53 g/m² for a perfect
+mirror at the Sun. The demo has a new Mass budget tab. No flight model changed, so every flight time
+is the same as yesterday.
+
+**Learned:** the existing `cruise_speed` now has two checks against published numbers, not only
+against itself. Turyshev 2026 gives 105 and 155 km/s for an ideal sail at 0.05 AU at 4.9 and
+2.3 g/m², and we get 105.3 and 153.6. Karlapp+ 2023's 1 kg aerographite craft comes to 0.1 g/m², and
+a dive to 0.6 AU gives 146.7 km/s against their 148, if it falls from a circular 1 AU orbit. That
+starting orbit is my assumption, because their abstract does not say. A parabolic arrival would give
+150.5. The materials database was the top item again and was not started: neither paper I opened
+names a sail material with optical constants. The current defaults (0.9, 0.69, 933 K) were never
+cited either, and the roadmap now says so.
+
+**Disagreements:** Turyshev's 155 km/s at 2.3 g/m² is 0.9% above ours, while his 105 matches. I did
+not find his exact arrival assumption or his critical density, so the test allows 1.5%.
+
+**Sources:** arXiv answered today. Opened: Karlapp, Heller & Tajmar 2023 (arXiv:2308.16698) abstract,
+Turyshev 2026 (arXiv:2602.04198) abstract and the first 100,000 characters of its HTML through the
+summariser. It quotes absorptivity 0.05 and emissivity 0.8 as the paper's own assumptions, and a
+950 K limit at reflectivity 0.95 from its reference [5], with no material named. Matloff+ 2008
+(arXiv:0809.3535) abstract: a beryllium sail at about 1000 K at 0.1 AU, but no material constants.
+Seen in search results only: Kipping & Lampo 2025 TARS (arXiv:2507.17615), Kezerashvili 2025 review
+(arXiv:2510.21743). Centauri Dreams feed: nothing new since iteration 7. The ADS token is still
+missing. No prompt injections seen.
+
+**Model:** Claude Opus 5.5.
+
+**Next:** boom mass that grows with the sail, or the materials database if a paper with a table
+turns up. Proposals 7 and 8 would unblock it.
+
 ## Iteration 7, 2026-11-23
 
 **Shipped:** the research tools now say why they failed. Any HTTP or network failure in

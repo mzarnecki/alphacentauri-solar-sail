@@ -7,14 +7,17 @@ Tick items off and keep the list ordered. Add new items freely.
 
 - [ ] Materials database (aluminium, graphene, dielectric stacks, ...) in place of a single melting
       point. It should also give each material a working temperature to replace the 90%
-      `WORKING_FRACTION` placeholder in `ass.trajectory`.
+      `WORKING_FRACTION` placeholder in `ass.trajectory`. The current defaults (reflectivity 0.9,
+      emissivity 0.69, 933 K) carry no citation either. Iteration 8 opened two papers and found no
+      named material with numbers, so this probably waits for proposal 7 or 8.
 - [ ] Source Proxima's radius (interferometry: Ségransan+ 2003 or Demory+ 2009, or Boyajian+ 2012
       Table 6 for consistency with its luminosity), so `--periastron best` works at Proxima.
 - [ ] Limb darkening in the finite-disc push. The Sun's edge is dimmer than its centre, so the
       uniform disc slightly understates the push near the photosphere. Needs a sourced law.
 - [ ] Decide whether the default 0.1 AU periastron at A should change. A is brighter than the Sun,
       so the sail runs at 853 K there, above the 840 K working limit that `best` uses.
-- [ ] Mass budget: sail, booms, payload, and the areal density they imply.
+- [ ] Boom mass that grows with the sail, in place of the fixed `structure` mass in
+      `ass.budget`. Needs a sourced scaling, for example from ACS3's composite booms.
 - [ ] Choose one luminosity source for A and B. Thévenin+ 2002 gives 1.519 and 0.5002, Akeson+ 2021
       Table 8 gives 1.5059 and 0.4981, and the orbit and masses already come from Akeson.
 - [ ] Find the source behind SIMBAD's -15.252 km/s for A (2021MNRAS.506..150B). The orbit now shows
@@ -22,6 +25,9 @@ Tick items off and keep the list ordered. Add new items freely.
 
 ## Done
 
+- [x] Mass budget: film, structure and payload add up to the whole-spacecraft areal density, and
+      `sail_area_for` sizes the sail for a target. Checked against Karlapp+ 2023 and Turyshev 2026
+      (iteration 8).
 - [x] `ass.research` reports the HTTP status, host and reason when a service fails. arXiv was
       returning 429 "Rate exceeded" behind the bare "Error executing tool". The arXiv daily
       listings are now readable as feeds (iteration 7).
