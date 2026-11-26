@@ -24,7 +24,7 @@ def app():
 
 def test_default_view_reports_the_mission(app):
     assert [tab.label for tab in app.tabs] == [
-        "Mission", "Sail", "Trajectory", "Stars", "Research feed",
+        "Mission", "Sail", "Mass budget", "Trajectory", "Stars", "Research feed",
     ]
     metrics = {metric.label: metric.value for metric in app.metric}
     assert metrics["Cruise speed"] == "161 km/s"
@@ -34,6 +34,22 @@ def test_default_view_reports_the_mission(app):
     assert app.info[0].value.startswith("CAPTURE")
     assert metrics["Proxima's speed relative to A and B"] == "274 m/s"
     assert metrics["Speed it would need to leave"] == "556 m/s"
+
+
+def test_mass_budget_adds_up_and_sizes_the_sail(app):
+    metrics = {metric.label: metric.value for metric in app.metric}
+    # 10^4 m^2 of 0.5 g/m^2 film is 5 kg, plus 1 kg payload and 1 kg structure.
+    assert metrics["Whole spacecraft"] == "0.700 g/m²"
+    assert metrics["Total mass"] == "7.00 kg"
+    assert metrics["Lightness 1 for a perfect mirror"] == "1.53 g/m²"
+    # 2 kg of fixed mass over the 0.5 g/m^2 left for it at the sidebar's 1 g/m^2.
+    assert "this film needs 4,000 m² of sail" in app.info[1].value
+
+
+def test_a_film_heavier_than_the_whole_target_gets_a_warning(app):
+    app.number_input(key="film").set_value(2.0).run()
+    assert not app.exception
+    assert "no sail is big enough" in app.warning[0].value
 
 
 def test_a_heavy_sail_gets_an_explanation_not_a_crash(app):

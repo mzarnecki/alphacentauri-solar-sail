@@ -163,6 +163,7 @@ uv run streamlit run app/streamlit_app.py
 |---|---|
 | `ass.bodies` | The Sun and the three Centauri stars, with cited positions, radii (Proxima's is still missing), motion through space and the 80-year orbit of A and B, and a check that Proxima is staying |
 | `ass.sail` | Radiation-pressure thrust, lightness and equilibrium temperature, with the star treated as a disc rather than a point when the sail gets close |
+| `ass.budget` | Adds up film, booms and payload into the grams per square metre everything else takes on trust, and says how big a sail you need |
 | `ass.trajectory` | Sundiver speed, the closest dive a sail survives, and a numerical integrator that checks the formula |
 | `ass.mission` | Aiming at where the star will be on arrival, braking feasibility, and a verdict |
 | `ass.cli` | The `ass` command, for finding out how late you will arrive |

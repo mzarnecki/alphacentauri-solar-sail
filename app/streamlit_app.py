@@ -20,6 +20,7 @@ from ass.bodies import (
     TARGETS,
     binding,
 )
+from ass.budget import MassBudget, critical_areal_density, sail_area_for
 from ass.mission import intercept, plan
 from ass.research import FEEDS, query_simbad, read_feed, search_arxiv
 from ass.sail import Sail, disc_factor
@@ -118,8 +119,8 @@ with st.sidebar:
             perihelion = best
         else:
             periastron = best
-mission_tab, sail_tab, trajectory_tab, stars_tab, research_tab = st.tabs(
-    ["Mission", "Sail", "Trajectory", "Stars", "Research feed"]
+mission_tab, sail_tab, budget_tab, trajectory_tab, stars_tab, research_tab = st.tabs(
+    ["Mission", "Sail", "Mass budget", "Trajectory", "Stars", "Research feed"]
 )
 
 with mission_tab:
@@ -183,6 +184,43 @@ with sail_tab:
         rule=(sail.melting_point, f"Aluminium melts at {sail.melting_point:,.0f} K"),
         mark=perihelion,
     )
+
+with budget_tab:
+    st.subheader("What your weight is made of")
+    st.caption(
+        "The sidebar asks for grams per square metre with the payload included. This tab shows "
+        "what that takes. Structure is a fixed mass for now, although real booms grow with the sail."
+    )
+    columns = st.columns(4)
+    area = columns[0].number_input("Sail area (m²)", 1.0, 1e8, 1e4, key="area")
+    film_grams = columns[1].number_input(
+        "Film (g/m²)", 0.001, 100.0, 0.5, format="%.3f", key="film",
+        help="Film alone. The aerographite sail in Karlapp et al. 2023 comes to 0.072.",
+    )
+    payload = columns[2].number_input("Payload (kg)", 0.0, 1e6, 1.0, key="payload")
+    structure = columns[3].number_input("Booms and structure (kg)", 0.0, 1e6, 1.0, key="structure")
+    budget = MassBudget(area, film_grams / 1000, payload, structure)
+    columns = st.columns(3)
+    columns[0].metric("Whole spacecraft", f"{budget.areal_density * 1000:,.3f} g/m²")
+    columns[1].metric("Total mass", f"{budget.total:,.2f} kg")
+    columns[2].metric(
+        "Lightness 1 for a perfect mirror", f"{critical_areal_density(SUN) * 1000:.2f} g/m²"
+    )
+    st.dataframe(
+        pd.DataFrame(
+            [
+                {"Part": part, "Share of mass": f"{share:.1%}"}
+                for part, share in budget.shares().items()
+            ]
+        ),
+        hide_index=True,
+    )
+    try:
+        needed = sail_area_for(density / 1000, film_grams / 1000, payload, structure)
+    except ValueError as error:
+        st.warning(f"To reach the sidebar's {density:g} g/m²: {error}.")
+    else:
+        st.info(f"To reach the sidebar's {density:g} g/m², this film needs {needed:,.0f} m² of sail.")
 
 with trajectory_tab:
     st.subheader("The sundiver, integrated numerically")
